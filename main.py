@@ -63,6 +63,7 @@ class CSVViewer:
         scrollbar.grid(row=3, column=4, sticky="ns")
         self.text_display.config(yscrollcommand=scrollbar.set)
 
+        # New button for downloading CSV
         self.download_button = tk.Button(
             self.root, text="Download CSV", command=self.download_csv
         )
@@ -93,6 +94,8 @@ class CSVViewer:
         )
 
         result_df = pd.read_csv("DailyNifty500.csv")
+        data_15mins_df = pd.read_csv("15minsData.csv")
+        data_15mins_df = self.format_date_hourly(data_15mins_df)
 
         if file_path:
             try:
@@ -106,13 +109,18 @@ class CSVViewer:
                             row["DATE"],
                             row["TIME"],
                             data_6m_hourly=data,
+                            data_15mins_df=data_15mins_df,
                         ),
                         axis=1,
                     )
                 )
                 formatted_df["next_hour_open"] = formatted_df.apply(
                     lambda row: find_next_hour_open(
-                        row["symbol"], row["DATE"], row["TIME"], data_6m_hourly=data
+                        row["symbol"],
+                        row["DATE"],
+                        row["TIME"],
+                        data_6m_hourly=data,
+                        data_15mins_df=data_15mins_df,
                     ),
                     axis=1,
                 )
